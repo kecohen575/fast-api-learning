@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 import re
 from typing import Optional
@@ -41,9 +41,23 @@ def solve(req: SolveRequest):
     except Exception as e:
         raise HTTPException(400, f"Invalid expression: {e}")
 
-    # 4. Optionally round per user’s request
     if req.round_result:
         result = round(result, req.precision)
 
-    # 5. Return the solution in our Pydantic response model
     return SolveResponse(solution=result)
+
+@app.get("/add")
+def add(
+    x: int = Query(..., description="First addend"),
+    y: int = Query(..., description="Second addend")
+):
+    return {"operation": "add", "x": x, "y": y, "result": x + y}
+
+@app.get("/square/{number}")
+def square(
+    number: int = Path(
+        ..., ge=0, le=1000,
+        description="The number to square (0 ≤ number ≤ 1000)"
+    )
+):
+    return {"number": number, "square": number * number}
