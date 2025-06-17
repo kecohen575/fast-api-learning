@@ -11,3 +11,5 @@ dist/
 # Virtual environments
 env/
 fastapi-env/
+
+.DS_store
