@@ -9,7 +9,7 @@ app = FastAPI()
 def read_root():
     return {"message": "Welcome to MATH!"}
 
-class SolveRequest(BaseModel):
+class CalculatorRequest(BaseModel):
     problem: str = Field(
         ..., 
         description="A simple arithmetic expression, e.g. '2 + 3 * 4'"
@@ -24,16 +24,16 @@ class SolveRequest(BaseModel):
         description="Whether to round the result to 'precision' (default: false)"
     )
 
-class SolveResponse(BaseModel):
+class CalculatorResponse(BaseModel):
     solution: float
 
-_ALLOWED = re.compile(r'^[0-9+\-*/%.()\^]+$')
+EXPR_WHITELIST = re.compile(r'^[0-9+\-*/%.()\^]+$')
 
-@app.post("/solve", response_model=SolveResponse)
-def solve(req: SolveRequest):
+@app.post("/calculate", response_model=CalculatorResponse)
+def calculate(req: CalculatorRequest):
     expr = req.problem.strip()
 
-    if not _ALLOWED.match(expr):
+    if not EXPR_WHITELIST.match(expr):
         raise HTTPException(400, "Expression contains invalid characters")
 
     try:
@@ -44,20 +44,20 @@ def solve(req: SolveRequest):
     if req.round_result:
         result = round(result, req.precision)
 
-    return SolveResponse(solution=result)
+    return CalculatorResponse(solution=result)
 
-@app.get("/add")
-def add(
+@app.get("/sum")
+def sum(
     x: int = Query(..., description="First addend"),
     y: int = Query(..., description="Second addend")
 ):
-    return {"operation": "add", "x": x, "y": y, "result": x + y}
+    return {"result": x + y}
 
-@app.get("/square/{number}")
+@app.get("/square")
 def square(
-    number: int = Path(
+    number: int = Query(
         ..., ge=0, le=1000,
         description="The number to square (0 ≤ number ≤ 1000)"
     )
 ):
-    return {"number": number, "square": number * number}
+    return {"result": number * number}
