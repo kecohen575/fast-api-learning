@@ -4,7 +4,7 @@ from utils.evaluator import safe_eval
 
 router = APIRouter()
 
-@router.post("/", response_model=CalculationResponse)
+@router.post("/calculate", response_model=CalculationResponse)
 def calculate(req: CalculationRequest):
     try:
         result = safe_eval(req.problem)

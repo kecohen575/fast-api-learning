@@ -1,6 +1,6 @@
 import re
 
-EXPR_WHITELIST = re.compile(r'^[0-9+\-*/%.()\^]+$')
+EXPR_WHITELIST = re.compile(r'^[0-9+\-*/%.()\s\^]+$')
 
 def safe_eval(expr: str) -> float:
     expr = expr.strip()
