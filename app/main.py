@@ -8,5 +8,5 @@ app = FastAPI()
 def read_root():
     return {"message": "Welcome to MATH!"}
 
-app.include_router(calc_router, prefix="/calculate", tags=["calculate"])
+app.include_router(calc_router, tags=["calculate"])
 app.include_router(ops_router, prefix="/operations", tags=["operations"])
